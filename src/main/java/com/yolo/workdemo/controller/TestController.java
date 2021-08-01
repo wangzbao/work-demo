@@ -17,5 +17,6 @@ public class TestController {
         boolean nullStr = StringUtilLocal.isNullStr(s1, s2);
         System.out.println(nullStr);
         System.out.println(StringUtils.isBlank(s3));
+        System.out.println("partial commit");
     }
 }
