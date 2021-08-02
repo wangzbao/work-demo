@@ -7,5 +7,6 @@ public class GitTest {
         System.out.println("new dev_git_learning_yolo_20210801 branch");
         System.out.println("partial commit");
         System.out.println("git stash test");
+        System.out.println("git squash test");
     }
 }
