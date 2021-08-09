@@ -1,20 +1,26 @@
 package com.yolo.workdemo.controller.rocketmq;
 
+import org.apache.rocketmq.client.consumer.MessageSelector;
+import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.TransactionListener;
-import org.apache.rocketmq.client.producer.TransactionMQProducer;
-import org.apache.rocketmq.client.producer.TransactionSendResult;
+import org.apache.rocketmq.client.producer.*;
 import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageQueue;
 import org.apache.rocketmq.remoting.common.RemotingHelper;
+import org.apache.rocketmq.remoting.exception.RemotingException;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class RocketMQTest {
-    public static void main(String[] args) throws MQClientException, UnsupportedEncodingException {
+/**
+ * 保证消息顺序
+ */
+public class RocketMQSequenceTest {
+    public static void main(String[] args) throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException, MQBrokerException {
         //用来接受rocketmq回调的一个监听器端口
         //这里会实现执行订单本地事务，commit，rollback，回调查询等逻辑
         TransactionListener transactionListener = new TransactionListenerImpl();
@@ -50,7 +56,16 @@ public class RocketMQTest {
         Message msg = new Message("PayOrderSuccessTopic", "TestTag", "TestKey", ("订单支付消息").getBytes(RemotingHelper.DEFAULT_CHARSET));
         //讲消息作为half消息的模式发送出去
         try {
-            TransactionSendResult sendResult = producer.sendMessageInTransaction(msg, null);
+            //---------消息顺序--------
+            SendResult sendResult = producer.send(msg,
+                    new MessageQueueSelector() {
+                        @Override
+                        public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) {
+                            Long orderId = (Long) arg; //根据订单id选择发送queue
+                            long index = orderId % mqs.size(); // 用订单id对messageQueue数量取模
+                            return mqs.get((int) index); // 返回一个messageQueue
+                        }
+                    }, "orderId");
         } catch (MQClientException e) {
             e.printStackTrace();
             //half消息发送失败
