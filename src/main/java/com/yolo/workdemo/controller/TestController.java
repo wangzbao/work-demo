@@ -40,13 +40,14 @@ public class TestController {
 
 //        System.out.println(user.getName() != null ? user.getName() : user.getAge());
         Set<String> whiteList = WhiteUtil.getWhiteList();
-        System.out.println("!!!!  "+whiteList);
+        System.out.println("!!!!  " + whiteList);
+        StringBuilder sb = new StringBuilder();
+        sb.append(1).append(",");
         String sex = user.getSex();
-        if (CollectionUtils.isNotEmpty(whiteList) && whiteList.contains("12313123")) {
-            sex = user.getSex()+"~~~";
-        } else {
-            sex = sex;
+        if (CollectionUtils.isNotEmpty(whiteList) && !whiteList.contains("12313123")) {
+            sex = sex.charAt(0) + "***" + sex.charAt(sex.length() - 1);
         }
-        System.out.println(sex);
+        sb.append(sex);
+        System.out.println(sb);
     }
 }

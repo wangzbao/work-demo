@@ -1,5 +1,6 @@
 package com.yolo.workdemo.domain;
 
+
 import lombok.Data;
 
 @Data
