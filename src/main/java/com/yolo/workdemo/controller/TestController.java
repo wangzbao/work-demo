@@ -1,13 +1,9 @@
 package com.yolo.workdemo.controller;
 
 import com.yolo.workdemo.domain.User;
-import com.yolo.workdemo.util.StringUtilLocal;
 import com.yolo.workdemo.util.WhiteUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 
 public class TestController {
