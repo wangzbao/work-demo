@@ -8,6 +8,8 @@ public class User {
     private String name;
     private String sex;
     private Integer age;
+    private String head;
+    private String head1;
 
     public User(String name, String sex, Integer age) {
         this.name = name;

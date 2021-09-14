@@ -2,8 +2,12 @@ package com.yolo.workdemo.controller;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.yolo.workdemo.common.constants.CsvHeadConstant;
+import com.yolo.workdemo.domain.Sheet2;
 import com.yolo.workdemo.domain.User;
+import com.yolo.workdemo.util.CSVUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,16 +18,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/excel")
 public class ExportController {
 
-    @GetMapping("export")
+    //投放执行表
+    private static String[] releaseExecutionHead = {"任务名", "执行日期", "品类", "目的", "品牌", "投放策略", "圈选条件", "投放时间",
+            "投放渠道", "文案", "预估投放量", "投放上线", "预估订单", "预估ROI", "执行人", "备注"};
+    //竞品分析
+    private static String[] conpetitiveProctAnalysisHead = {"SKU", "品类", "类型", "品牌", "标题", "价格", "竞争度"};
+
+    @PostMapping("export")
     public void export(HttpServletResponse response) throws UnsupportedEncodingException {
         ExcelWriter writer = new ExcelWriter(true, "第1个sheet");
-
         User zhangsan = new User("张三", "男", 18);
         User lisi = new User("李四", "女", 25);
         User wangwu = new User("王五", "女", 21);
@@ -31,27 +41,30 @@ public class ExportController {
         ArrayList<User> list = new ArrayList<>();
         list.add(zhangsan);
         list.add(lisi);
-        writer.addHeaderAlias("name","姓名");
-        writer.addHeaderAlias("sex","性别");
-        writer.addHeaderAlias("age","年龄");
+        writer.addHeaderAlias("name", "姓名");
+        writer.addHeaderAlias("sex", "性别");
+        writer.addHeaderAlias("age", "年龄");
+        writer.addHeaderAlias("head", "预估投放量");
+        writer.addHeaderAlias("head1", "投放上线");
         writer.write(list);
 
-        ExcelWriter sheet1 = writer.setSheet("第二个sheet");
+        ExcelWriter sheet2 = writer.setSheet("第二个sheet");
+        Sheet2 x = new Sheet2("sku1", "品类1");
+        Sheet2 x1 = new Sheet2("sku2", "品类2");
         ArrayList<Object> list1 = new ArrayList<>();
-        list1.add(lisi);
-        list1.add(wangwu);
-        sheet1.addHeaderAlias("name","姓名1");
-        sheet1.addHeaderAlias("sex","性别1");
-        sheet1.addHeaderAlias("age","年龄1");
-        sheet1.write(list1);
+        list1.add(x);
+        list1.add(x1);
+        sheet2.addHeaderAlias("sku", "sku");
+        sheet2.addHeaderAlias("category", "品类");
+        sheet2.write(list1);
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
-//name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
+        //name是下载对话框的名称，不支持中文，想用中文名称需要进行utf8编码
         String excelName = "用户基本信息表";
-//excelName = new String(excelName.getBytes(),"utf-8");
+        //excelName = new String(excelName.getBytes(),"utf-8");
         excelName = URLEncoder.encode(excelName, "utf-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + excelName + ".xls");
 
-//将excel文件信息写入输出流，返回给调用者
+        //将excel文件信息写入输出流，返回给调用者
         ServletOutputStream excelOut = null;
         try {
             excelOut = response.getOutputStream();
@@ -62,6 +75,40 @@ public class ExportController {
             writer.close();
         }
         IoUtil.close(excelOut);
+//        return AjaxResult.success();
+    }
+
+    @GetMapping("selected")
+    public void selected(HttpServletResponse response, String head) throws IOException {
+        String[] s = CsvHeadConstant.getHead(head);
+        User zhangsan = new User("张三", "男", 18);
+        User lisi = new User("李四", "女", 25);
+        User wangwu = new User("王五", "女", 21);
+        List<User> list = new ArrayList<>();
+        list.add(zhangsan);
+        list.add(lisi);
+        list.add(wangwu);
+        List<Object[]> lines = new ArrayList<>();
+        //添加表头
+        lines.add(s);
+        HashMap<String, Boolean> relationMap = CsvHeadConstant.FieldHeadRelation();
+        list.forEach(user -> {
+            List<Object> line = new ArrayList<>();
+            if (relationMap.get("1")) {
+                line.add(user.getName());
+            }
+            if (relationMap.get("2")) {
+                line.add(user.getSex());
+            }
+            if (relationMap.get("3")) {
+                line.add(user.getAge());
+            }
+            if (relationMap.get("4")) {
+                line.add(user.getName());
+            }
+            lines.add(line.toArray());
+        });
+        CSVUtils.responseCSV("测试动态下载", lines, response);
     }
 
     public static void main(String[] args) {
