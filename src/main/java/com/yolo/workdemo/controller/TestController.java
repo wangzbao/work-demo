@@ -1,6 +1,7 @@
 package com.yolo.workdemo.controller;
 
 import com.yolo.workdemo.domain.User;
+import com.yolo.workdemo.domain.enums.MtTaskStatusPeriodEnum;
 import com.yolo.workdemo.util.WhiteUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -45,5 +46,7 @@ public class TestController {
         }
         sb.append(sex);
         System.out.println(sb);
+
+        MtTaskStatusPeriodEnum byLable = MtTaskStatusPeriodEnum.getByLable(4);
     }
 }
