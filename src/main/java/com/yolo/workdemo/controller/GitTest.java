@@ -8,6 +8,7 @@ import com.yolo.workdemo.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("size")
 @Slf4j
 public class GitTest {
+
+    @Value("${batch.maxsize:40}")
+    private Integer batchDownloadMaxSize;
 
     public static void main(String[] args) throws Exception {
 
@@ -140,6 +144,7 @@ public class GitTest {
     //    @RateLimit(code = "all", permitsPerMinute = 10, permitsPerDay = 500)
     @GetMapping("all")
     public AjaxResult get() {
+        System.out.println(batchDownloadMaxSize);
         System.out.println("==============");
         User zhangsan = new User("张三", "男", 18);
         User lisi = new User("李四", "女", 21);
