@@ -26,7 +26,6 @@ public class GitTest {
 
     public static void main(String[] args) throws Exception {
 
-        System.out.println("分支一尝试第2次提交");
         String id = "201139431";
         Long realId = IdConvertUtil.getRealId(id, null);
         System.out.println(realId);
