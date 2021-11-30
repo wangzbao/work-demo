@@ -30,7 +30,7 @@ public class GitTest {
 
     public static void main(String[] args) throws Exception {
 
-        String id = "201139431";
+        String id = "21141353713";
         Long realId = IdConvertUtil.getRealId(id, null);
         System.out.println(realId);
         Long realId1 = IdConvertUtil.getRealId("20113943", null);
@@ -66,8 +66,18 @@ public class GitTest {
         list.add(lisi);
         list.add(wangwu);
         list.add(zhangsan);
+        User wu = null;
+        list.add(wu);
         System.out.println("当前list长度" + list.size());
-        Assert.isTrue(list.size() <= 2, "批量导出用户明细最多可选2个任务");
+        List<User> collect = list.stream().filter(user -> null != user).collect(Collectors.toList());
+        System.out.println("当前list长度" + collect.size());
+        System.out.println(collect);
+        Map<Integer, User> userMap = list.stream().collect(Collectors.toMap(User::getAge, User -> User));
+        System.out.println(userMap);
+        User user = userMap.get(22);
+        System.out.println(null == user);
+        System.out.println(user.getName());
+//        Assert.isTrue(list.size() <= 2, "批量导出用户明细最多可选2个任务");
 
 //        list.stream().collect(Collectors.groupingBy(User::getAge))
 //                .forEach((key, value) -> {
