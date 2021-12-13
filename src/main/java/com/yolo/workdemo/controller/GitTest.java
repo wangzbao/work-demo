@@ -8,6 +8,8 @@ import com.yolo.workdemo.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,9 @@ public class GitTest {
     public static void main(String[] args) throws Exception {
 
         String id = "21141353713";
+        if (NumberUtils.isDigits(id)) {
+            System.out.println("是数字");
+        }
         Long realId = IdConvertUtil.getRealId(id, null);
         System.out.println(realId);
         Long realId1 = IdConvertUtil.getRealId("20113943", null);
@@ -66,17 +71,19 @@ public class GitTest {
         list.add(lisi);
         list.add(wangwu);
         list.add(zhangsan);
-        User wu = null;
+        User wu = new User();
         list.add(wu);
         System.out.println("当前list长度" + list.size());
-        List<User> collect = list.stream().filter(user -> null != user).collect(Collectors.toList());
-        System.out.println("当前list长度" + collect.size());
-        System.out.println(collect);
+//        List<User> collect = list.stream().filter(user -> null != user).collect(Collectors.toList());
+//        System.out.println("当前list长度" + collect.size());
+//        System.out.println(collect);
         Map<Integer, User> userMap = list.stream().collect(Collectors.toMap(User::getAge, User -> User));
         System.out.println(userMap);
         User user = userMap.get(22);
         System.out.println(null == user);
-        System.out.println(user.getName());
+//        System.out.println(user.getName());
+        User result = new User();
+        BeanUtils.copyProperties(user, result);
 //        Assert.isTrue(list.size() <= 2, "批量导出用户明细最多可选2个任务");
 
 //        list.stream().collect(Collectors.groupingBy(User::getAge))
