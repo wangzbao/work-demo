@@ -13,6 +13,8 @@ public class User {
     private Integer age;
     private String head;
     private String head1;
+    private String no;
+    private boolean isHistory;
 
     public User(String name, String sex, Integer age) {
         this.name = name;
@@ -21,5 +23,13 @@ public class User {
     }
 
     public User() {
+    }
+
+    public static void main(String[] args) {
+        int index =1 ;
+        int foo[] = new int[3];
+        int bar = foo[index];
+        int value = bar+index;
+        System.out.println(value);
     }
 }

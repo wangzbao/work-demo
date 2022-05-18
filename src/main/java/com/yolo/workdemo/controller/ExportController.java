@@ -1,11 +1,17 @@
 package com.yolo.workdemo.controller;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.alibaba.fastjson.JSON;
 import com.yolo.workdemo.common.constants.CsvHeadConstant;
+import com.yolo.workdemo.domain.NewCustomerParam;
 import com.yolo.workdemo.domain.Sheet2;
 import com.yolo.workdemo.domain.User;
 import com.yolo.workdemo.util.CSVUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/excel")
+@Slf4j
 public class ExportController {
 
     //投放执行表
@@ -110,6 +114,31 @@ public class ExportController {
         });
         CSVUtils.responseCSV("测试动态下载", lines, response);
     }
+
+
+    @GetMapping("/list")
+    public String list(@DateTimeFormat(pattern = "yyyy-MM-dd") Date dtFrom, @DateTimeFormat(pattern = "yyyy-MM-dd") Date dtTo) {
+        JSONObject object = new JSONObject();
+        JSONObject json = new JSONObject();
+        json.put("dtFrom", DateUtil.format(dtFrom, "yyyy-MM-dd"));
+        json.put("dtTo", DateUtil.format(dtTo, "yyyy-MM-dd"));
+        json.put("period", 1);
+        json.put("days", 1);
+
+        object.put("methodType", 1);
+        object.put("param", json);
+        com.alibaba.fastjson.JSONObject jsonParam = JSON.parseObject(object.toString());
+        log.info(jsonParam.toString());
+        if (!jsonParam.containsKey("methodType")) {
+            log.info("json有问题");
+        }
+        String param = jsonParam.getString("param");
+        NewCustomerParam newCustomerParam = JSON.parseObject(jsonParam.getString("param"), NewCustomerParam.class);
+        log.info(param);
+        log.info(newCustomerParam.toString());
+        return "你是真的秀";
+    }
+
 
     public static void main(String[] args) {
         ExcelWriter writer = new ExcelWriter(true, "第1个sheet");
