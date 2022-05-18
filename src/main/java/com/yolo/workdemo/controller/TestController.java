@@ -31,7 +31,7 @@ public class TestController {
     @GetMapping("/list")
     public AjaxResult testSize(@RequestParam("dtArr") List<String> dtArr,
                                @RequestParam("idArr") List<String> idArr) {
-        System.out.println("进入"+ dtArr.size());
+        System.out.println("进入" + dtArr.size());
         for (int i = 0; i < dtArr.size(); i++) {
             System.out.println("==============" + dtArr.get(i) + "======" + idArr.get(i));
         }

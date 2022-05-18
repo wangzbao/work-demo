@@ -5,8 +5,10 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.TableStyle;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.WriteTable;
+import com.alibaba.excel.write.style.column.SimpleColumnWidthStyleStrategy;
 import com.alibaba.fastjson.JSON;
 import com.yolo.workdemo.controller.TestController;
 import com.yolo.workdemo.domain.*;
@@ -336,7 +338,8 @@ class WorkDemoApplicationTests {
 
 //            .needHead(Boolean.TRUE).build();
             WriteTable writeTable0 = EasyExcel.writerTable(0).excludeColumnFiledNames(excludeColumnFiledNames).head(Sheet1.class).needHead(true).build();
-            WriteTable writeTable1 = EasyExcel.writerTable(1).head(Collections.singletonList(Collections.singletonList("说明：2022年6月前的数据，可能存在明细功能上线前，部分任务无日期明细情况"))).needHead(true).build();
+            WriteTable writeTable1 = EasyExcel.writerTable(1).head(Collections.singletonList(Collections.singletonList("说明：2022年6月前的数据，可能存在明细功能上线前，部分任务无日期明细情况")))
+                    .registerWriteHandler(new SimpleColumnWidthStyleStrategy(100)).needHead(true).build();
 
 //            WriteCellStyle headWriteCellStyle = new WriteCellStyle();
 //            WriteFont headWriteFont = new WriteFont();
@@ -352,7 +355,6 @@ class WorkDemoApplicationTests {
 //
             TableStyle style = new TableStyle();
             style.setTableHeadBackGroundColor(IndexedColors.RED);
-            style.set
             writeTable1.setTableStyle(style);
             WriteTable writeTable2 = EasyExcel.writerTable(2).excludeColumnFiledNames(excludeColumnFiledNames).head(Sheet1.class).needHead(true).build();
             // 第一次写入会创建头
